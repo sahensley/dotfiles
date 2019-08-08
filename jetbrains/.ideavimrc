@@ -1,0 +1,13 @@
+set timeout
+set timeoutlen=500
+set number
+set relativenumber
+set clipboard+=unnamed
+set commentary
+set surround
+
+:imap jj <ESC>
+inoremap <C-h> <left>
+inoremap <C-j> <down>
+inoremap <C-k> <up>
+inoremap <C-l> <right>
