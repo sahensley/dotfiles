@@ -19,6 +19,13 @@ userbashrc="${HOME}/.bashrc"
 localbin="${HOME}/.local/bin"
 liquidprompt="${HOME}/.liquidprompt/liquidprompt"
 
+# Aliases
+alias ls='ls -G'
+
+# Aliases for commands which may not exist. Test for existence.
+[ $(command -v pyenv) ] && alias pyv='pyenv versions --skip-aliases'
+[ $(command -v mvim) ] && alias vim='/usr/local/bin/mvim -v'
+
 # Fix MacOS path oddities for Tmux
 if [ -f '/etc/profile' ] ; then
     unset PATH
