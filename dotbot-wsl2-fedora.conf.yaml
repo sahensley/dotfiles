@@ -1,0 +1,10 @@
+- defaults:
+    link:
+      if: '[ -n "${WSL2}" ] && [ -f /etc/fedora-release ]'
+      relink: true
+
+- clean: ['~']
+
+- link:
+    ~/.tmux.conf:
+      path: tmux/wsl/dot_tmux.conf
