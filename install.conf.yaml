@@ -6,7 +6,7 @@
 - clean: ['~']
 
 - link:
-    ~/.tmux.conf:
-      path: tmux/wsl/dot_tmux.conf
     ~/.inputrc:
       path: readline/dot_inputrc
+    ~/.tmux.conf:
+      path: tmux/dot_tmux.conf
