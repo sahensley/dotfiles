@@ -1,6 +1,5 @@
 - defaults:
     link:
-      if: '[ -n "${WSL2}" ] && [ -f /etc/fedora-release ]'
       relink: true
 
 - clean: ['~']
@@ -12,3 +11,5 @@
       path: tmux/dot_tmux.conf
     ~/.ideavimrc:
       path: jetbrains/dot_ideavimrc
+    ~/.bashrc:
+      path: bash/dot_bashrc
