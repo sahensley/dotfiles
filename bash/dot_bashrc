@@ -115,4 +115,4 @@ function parse_git_dirty() {
 
 # ANSI color codes cheat sheet: https://misc.flogisoft.com/bash/tip_colors_and_formatting
 # Prompt generator: https://ezprompt.net/ and https://github.com/jmatth/ezprompt
-export PS1="\[\e[94m\][\[\e[m\]\u:\w\[\e[94m\]]\[\e[m\]\`parse_git_branch\`\`nonzero_return\`\\$ "
+export PS1="\[\e[94m\][\[\e[m\]\u@\h:\w\[\e[94m\]]\[\e[m\]\`parse_git_branch\`\`nonzero_return\`\\$ "
