@@ -122,7 +122,7 @@ set linebreak                   "wrap whole word, 'list on' breaks this
 set showbreak=»»»               "Character to show on wrapped lines
 set foldmethod=indent           "Create folds at indents
 set foldnestmax=5               "Don't go deeper than 5 nested indents
-set cryptmethod=blowfish        "Set crypt method to blowfish.  Requires vim 7.3+
+set cryptmethod=blowfish2       "Set crypt method to blowfish2. Vim 7.4.401+ only
 set clipboard^=unnamed,unnamedplus "Copy contents into the system clipboard
 "seoul256 (dark) range 233 (darkest) ~ 239 (lightest) default: 237
 let g:seoul256_background=236
