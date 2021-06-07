@@ -48,6 +48,10 @@ then
     PATH="${NPM_GLOBAL_PACKAGES}/bin:${PATH}"
 fi
 
+if [ -d "${HOME}/.asdf" ]; then
+    . "${HOME}/.asdf/asdf.sh"
+fi
+
 export PATH
 
 # Bash prompt from here: https://stackoverflow.com/a/23410110
