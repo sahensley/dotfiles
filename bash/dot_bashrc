@@ -48,9 +48,15 @@ then
     PATH="${NPM_GLOBAL_PACKAGES}/bin:${PATH}"
 fi
 
+# asdf version manager
 if [ -d "${HOME}/.asdf" ]; then
     . "${HOME}/.asdf/asdf.sh"
 fi
+
+# Deletes branch from remote host (Github, Gitlab, etc..)
+,git-delete-remote-branch () {
+    git push origin --delete "${1}"
+}
 
 export PATH
 
