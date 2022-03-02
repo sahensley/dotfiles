@@ -5,8 +5,6 @@
 call plug#begin()
 " Seoul256 - color scheme
 Plug 'junegunn/seoul256.vim'
-" Goyo - distraction free writing
-Plug 'junegunn/goyo.vim'
 " Airline - fancy statusline
 Plug 'vim-airline/vim-airline'
 " BufExplorer - easier buffer switching
@@ -19,12 +17,6 @@ Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-vinegar'
 " ALE - Asynchronous Lint Engine
 Plug 'dense-analysis/ale'
-" Ansible-VIM - better support for Ansible YAML playbooks
-Plug 'pearofducks/ansible-vim'
-" PS1 - Powershell syntax
-Plug 'PProvost/vim-ps1'
-" Python auto-formatter Black
-Plug 'psf/black', { 'branch': 'stable' }
 " indentLine - shows indention levels with 'set list' on
 Plug 'yggdroot/indentline'
 " BetterWhitespace - whitespace highlighting
