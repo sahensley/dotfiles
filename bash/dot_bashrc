@@ -175,8 +175,8 @@ function set_bash_prompt () {
     # Set the bash prompt variable. If SSH'd, include the host.
     if [ -n "$SSH_TTY" ]; then
         PS1="${PYTHON_VIRTUALENV}${YELLOW}\u@\h:\w${COLOR_NONE} ${BRANCH}${PROMPT_SYMBOL} "
-    elif [ -n "$DISTROBOX_ENTER_PATH" ]; then
-        PS1="${PYTHON_VIRTUALENV}${YELLOW}\u@\h:\w${COLOR_NONE} ${BRANCH}${PROMPT_SYMBOL} "
+    elif [ -n "$DISTROBOX_ENTER_PATH" ] || [ -f "/run/.toolboxenv" ]; then
+        PS1="🧰${PYTHON_VIRTUALENV}${YELLOW}\u:\w${COLOR_NONE} ${BRANCH}${PROMPT_SYMBOL} "
     else
         PS1="${PYTHON_VIRTUALENV}${YELLOW}\u:\w${COLOR_NONE} ${BRANCH}${PROMPT_SYMBOL} "
     fi
