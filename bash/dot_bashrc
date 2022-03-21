@@ -16,9 +16,9 @@ if [ -f /etc/bashrc ]; then
 fi
 
 # Configure host specific settings
-if [ -f ".bashrc_$(hostname --short)" ]
+if [ -f "${HOME}/.bashrc_$(hostname --short)" ]
 then
-    source .bashrc_$(hostname --short)
+    source "${HOME}/.bashrc_$(hostname --short)"
 fi
 
 # User specific environment

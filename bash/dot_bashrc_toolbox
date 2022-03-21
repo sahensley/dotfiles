@@ -1,0 +1,4 @@
+alias podman='podman --remote'
+function ,istoolbx () {
+    [ -f "/run/.toolboxenv" ] && grep -oP "(?<=name=\")[^\";]+" /run/.containerenv
+}

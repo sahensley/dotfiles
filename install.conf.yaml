@@ -13,5 +13,7 @@
       path: jetbrains/dot_ideavimrc
     ~/.bashrc:
       path: bash/dot_bashrc
+    ~/.bashrc_toolbox:
+      path: bash/dot_bashrc_toolbox
     ~/.vim:
       path: vim/
