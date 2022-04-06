@@ -27,30 +27,17 @@ then
     PATH="${HOME}/.local/bin:${PATH}"
 fi
 
-# Node setup
-NPM_PACKAGES="${HOME}/.local/npm-packages"
-if ! [[ "${NODE_PATH}" =~ "${NPM_PACKAGES}/lib/node_modules:" ]]
-then
-    NODE_PATH="${NPM_PACKAGES}/lib/node_modules:${NODE_PATH}"
-fi
-export NODE_PATH
-
-# Node bin path setup
-if ! [[ "${PATH}" =~ "${NPM_PACKAGES}/bin:" ]]
-then
-    PATH="${NPM_PACKAGES}/bin:${PATH}"
-fi
-
-# Node global bin path setup
-NPM_GLOBAL_PACKAGES="${HOME}/.local/lib/node/npm-packages"
-if ! [[ "${PATH}" =~ "${NPM_GLOBAL_PACKAGES}/bin:" ]]
-then
-    PATH="${NPM_GLOBAL_PACKAGES}/bin:${PATH}"
-fi
-
 # asdf version manager
 if [ -d "${HOME}/.asdf" ]; then
-    . "${HOME}/.asdf/asdf.sh"
+    # https://github.com/asdf-community/asdf-direnv#pro-tips
+    # ASDF is setup to use direnv.  We don't need the shims in our path
+    # All shims are still available via asdf exec <shim>
+    # To return to default behavior, uncomment the `asdf.sh` line below
+    # source "${HOME}/.asdf/asdf.sh"
+    PATH="${HOME}/.asdf/bin:${PATH}"
+    if [ ! -f "${HOME}/.config/bash/no_asdf_autocomplete" ]; then
+        source $HOME/.asdf/completions/asdf.bash
+    fi
 fi
 
 # Deletes branch from remote host (Github, Gitlab, etc..)
