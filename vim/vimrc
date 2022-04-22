@@ -114,7 +114,6 @@ set linebreak                   "wrap whole word, 'list on' breaks this
 set showbreak=»»»               "Character to show on wrapped lines
 set foldmethod=indent           "Create folds at indents
 set foldnestmax=5               "Don't go deeper than 5 nested indents
-set cryptmethod=blowfish2       "Set crypt method to blowfish2. Vim 7.4.401+ only
 set clipboard^=unnamed,unnamedplus "Copy contents into the system clipboard
 "seoul256 (dark) range 233 (darkest) ~ 239 (lightest) default: 237
 let g:seoul256_background=236
@@ -130,6 +129,12 @@ colorscheme seoul256-light      " Use seoul256-light. Change to seoul256 for a d
 set colorcolumn=81              " Highlight column 81
 au VimResized * :wincmd =       " Auto resize split windows on parent resize
 nmap <Space> <Leader>
+
+" Configure items which were removed in Neovim
+if !has('nvim')
+    set cryptmethod=blowfish2   "Set crypt method to blowfish2. Vim 7.4.401+ only
+endif
+
 
 " Load matchit.vim, but only if the user hasn't installed a newer version.
 " From TPope's sensible.vim
