@@ -35,6 +35,7 @@ if [ -d "${HOME}/.asdf" ]; then
     # To return to default behavior, uncomment the `asdf.sh` line below
     # source "${HOME}/.asdf/asdf.sh"
     PATH="${HOME}/.asdf/bin:${PATH}"
+    source "${XDG_CONFIG_HOME:-$HOME/.config}/asdf-direnv/bashrc"
     if [ ! -f "${HOME}/.config/bash/no_asdf_autocomplete" ]; then
         source $HOME/.asdf/completions/asdf.bash
     fi
@@ -171,3 +172,4 @@ function set_bash_prompt () {
 
 # Tell bash to execute this function just before displaying its prompt.
 PROMPT_COMMAND=set_bash_prompt
+
