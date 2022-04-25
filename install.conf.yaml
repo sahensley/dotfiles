@@ -17,3 +17,5 @@
       path: bash/dot_bashrc_toolbox
     ~/.vim:
       path: vim/
+    ~/.config/nvim/init.vim:
+      path: nvim/init.vim
