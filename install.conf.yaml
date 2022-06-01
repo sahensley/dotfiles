@@ -19,3 +19,5 @@
       path: vim/
     ~/.config/nvim/init.vim:
       path: nvim/init.vim
+    ~/.digrc:
+      path: dig/dot_digrc
