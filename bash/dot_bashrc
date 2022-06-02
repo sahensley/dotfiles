@@ -1,5 +1,8 @@
 # .bashrc
+# vim: fdm=marker
 
+#{{{ Variable setup - Bash setup and internal
+# Bash setup
 HISTCONTROL=ignoreboth
 shopt -s histappend
 HISTSIZE=1000
@@ -7,35 +10,73 @@ HISTFILESIZE=2000
 shopt -s checkwinsize
 PROMPT_DIRTRIM=2
 
+# Used for other commands in .bashrc
+hostname_short=$(hostname --short 2> /dev/null)
+#}}}
+
+# {{{ Variable setup - other
+export PIP_REQUIRE_VIRTUALENV=true
+#}}}
+
 # Check for interative mode, return if not interactive
 [[ $- = *i* ]] || return
 
+
+# {{{ Source global and host specific bashrc files
 # Source global definitions
 if [ -f /etc/bashrc ]; then
     . /etc/bashrc
 fi
 
 # Configure host specific settings
-if [ -f "${HOME}/.bashrc_$(hostname --short)" ]
+if [ -f "${HOME}/.bashrc_${hostname_short}" ]
 then
-    source "${HOME}/.bashrc_$(hostname --short)"
+    source "${HOME}/.bashrc_${hostname_short}"
 fi
+#}}}
 
-# User specific environment
+#{{{ $PATH setup
+# Add .local/bin to path if it isn't already there
 if ! [[ "${PATH}" =~ "${HOME}/.local/bin:" ]]
 then
     PATH="${HOME}/.local/bin:${PATH}"
 fi
+export PATH
+#}}}
 
+#{{{ Functions
 # Deletes branch from remote host (Github, Gitlab, etc..)
 ,git-delete-remote-branch () {
     git push origin --delete "${1}"
+
 }
 
-export PATH
+# Updates fork with upstream default branch - runs as a subshell
+,git-update-fork() {
+  (
+    default_branch=$(git remote show upstream|grep 'HEAD branch'|cut -d' ' -f5)
+    git checkout $default_branch
+    git fetch upstream
+    git merge upstream/$default_branch
+    git push
+    git checkout -
+  )
+}
+#}}}
 
+#{{{ Aliases
+alias ,set-requests-ca-bundle='export REQUESTS_CA_BUNDLE="/etc/pki/ca-trust/extracted/openssl/ca-bundle.trust.crt"'
+alias ,unset-requests-ca-bundle='unset REQUESTS_CA_BUNDLE'
+alias ,set-xdg-runtime-dir='export XDG_RUNTIME_DIR="/run/user/$(id -u)"'
+alias ,unset-pip-require-virtualenv='unset PIP_REQUIRE_VIRTUALENV'
+alias gitrefgraph='git log --graph --oneline --decorate --reflog'
+alias docker='podman'
+alias dbox='distrobox'
+#}}}
+
+# {{{ Bash prompt and related helper functions
+################################### bash_prompt ################################
 # Bash prompt from here: https://stackoverflow.com/a/23410110
-# bash_prompt
 # The various escape codes that we can use to color our prompt.
         RED="\[\033[0;31m\]"
      YELLOW="\[\033[1;33m\]"
@@ -158,8 +199,9 @@ function set_bash_prompt () {
 
 # Tell bash to execute this function just before displaying its prompt.
 PROMPT_COMMAND=set_bash_prompt
+#}}}
 
-# asdf version manager - placement is picky, put at the bottom of bashrc
+#{{{ asdf version manager - placement is picky, put at the bottom of bashrc
 if [ -d "${HOME}/.asdf" ]; then
     # https://github.com/asdf-community/asdf-direnv#pro-tips
     # ASDF is setup to use direnv.  We don't need the shims in our path
@@ -172,4 +214,5 @@ if [ -d "${HOME}/.asdf" ]; then
         source $HOME/.asdf/completions/asdf.bash
     fi
 fi
+#}}}
 
