@@ -16,6 +16,8 @@ hostname_short=$(hostname --short 2> /dev/null)
 
 # {{{ Variable setup - other
 export PIP_REQUIRE_VIRTUALENV=true
+export EDITOR='vim'
+export KUBE_EDITOR="${EDITOR}"
 #}}}
 
 # Check for interative mode, return if not interactive
@@ -45,10 +47,14 @@ export PATH
 #}}}
 
 #{{{ Functions
+# Delete file or directory from history. Requires git-filter-repo
+,git-delete-path-from-history () {
+    git filter-repo --invert-paths --path "${1}"
+}
+
 # Deletes branch from remote host (Github, Gitlab, etc..)
 ,git-delete-remote-branch () {
     git push origin --delete "${1}"
-
 }
 
 # Updates fork with upstream default branch - runs as a subshell
@@ -61,6 +67,24 @@ export PATH
     git push
     git checkout -
   )
+}
+
+function ,rmtrash() {
+    if command -v trash-put > /dev/null 2>&1; then
+        trash-put "${@}"
+    else
+        echo "trash-cli is not installed!"
+    fi
+}
+
+function ,podman-socket-setup() {
+    XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR:-/run/user/$(id -u)}
+    export DOCKER_HOST=unix://$XDG_RUNTIME_DIR/podman/podman.sock
+    export DOCKER_SOCK="${DOCKER_HOST}"
+}
+
+function ,minikubectl-setup() {
+    alias kubectl="minikube kubectl --"
 }
 #}}}
 
