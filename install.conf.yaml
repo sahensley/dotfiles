@@ -21,3 +21,5 @@
       path: nvim/init.vim
     ~/.digrc:
       path: dig/dot_digrc
+    ~/.config/alacritty/alacritty.yml:
+      path: alacritty/alacritty.yml

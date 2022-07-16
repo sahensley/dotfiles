@@ -1,0 +1,57 @@
+window:
+  decorations: full
+  padding:
+    x: 0
+    y: 0
+  dynamic_padding: false
+  opacity: 0.95
+draw_bold_text_with_bright_colors: true
+colors:
+  # COLORSCHEME: gnome-dark.yaml
+  # Default colors
+  primary:
+    background: '0x171421'
+    foreground: '0xd0cfcc'
+
+  # Normal colors
+  normal:
+    black: '0x171421'
+    red: '0xc01c28'
+    green: '0x26a269'
+    yellow: '0xa2734c'
+    blue: '0x12488b'
+    magenta: '0xa347ba'
+    cyan: '0x2aa1b3'
+    white: '0xd0cfcc'
+
+  # Bright colors
+  bright:
+    black: '0x5e5c64'
+    red: '0xf66151'
+    green: '0x33da7a'
+    yellow: '0xe9ad0c'
+    blue: '0x2a7bde'
+    magenta: '0xc061cb'
+    cyan: '0x33c7de'
+    white: '0xffffff'
+  cursor:
+    text: '0x191622'
+    cursor: '0xf8f8f2'
+
+  dim:
+    black: '0x000000'
+    red: '0xb21818'
+    green: '0x18b218'
+    yellow: '0xb26818'
+    blue: '0x1818b2'
+    magenta: '0xb218b2'
+    cyan: '0x18b2b2'
+    white: '0xb2b2b2'
+  search:
+    matches:
+      foreground: '0xb2b2b2'
+      background: '0xb26818'
+    focused_match:
+      foreground: CellBackground
+      background: CellForeground
+
