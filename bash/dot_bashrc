@@ -227,15 +227,21 @@ PROMPT_COMMAND=set_bash_prompt
 
 #{{{ asdf version manager - placement is picky, put at the bottom of bashrc
 if [ -d "${HOME}/.asdf" ]; then
-    # https://github.com/asdf-community/asdf-direnv#pro-tips
-    # ASDF is setup to use direnv.  We don't need the shims in our path
-    # All shims are still available via asdf exec <shim>
-    # To return to default behavior, uncomment the `asdf.sh` line below
-    # source "${HOME}/.asdf/asdf.sh"
-    export PATH="${HOME}/.asdf/bin:${PATH}"
-    source "${XDG_CONFIG_HOME:-$HOME/.config}/asdf-direnv/bashrc"
+    if [ ! -f "${HOME}/.config/bash/no_asdf_shims_in_path" ]; then
+        source "${HOME}/.asdf/asdf.sh"
+        source "${XDG_CONFIG_HOME:-$HOME/.config}/asdf-direnv/bashrc"
+    else
+        # https://github.com/asdf-community/asdf-direnv#pro-tips
+        # ASDF is setup to use direnv.  We don't need the shims in our path
+        # All shims are still available via asdf exec <shim>
+        # To return to default behavior, uncomment the `asdf.sh` line below
+        # source "${HOME}/.asdf/asdf.sh"
+        export PATH="${HOME}/.asdf/bin:${PATH}"
+        source "${XDG_CONFIG_HOME:-$HOME/.config}/asdf-direnv/bashrc"
+    fi
+
     if [ ! -f "${HOME}/.config/bash/no_asdf_autocomplete" ]; then
-        source $HOME/.asdf/completions/asdf.bash
+        source "${HOME}/.asdf/completions/asdf.bash"
     fi
 fi
 #}}}
