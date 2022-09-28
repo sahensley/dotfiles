@@ -28,12 +28,13 @@ Plug 'vimwiki/vimwiki'
 call plug#end()
 " }}}
 
-"Load different settings depending on OS
+" OS specific defaults {{{
 if has('win32') || has('win64')
     set fileformat=dos
 elseif has('unix')
     set fileformat=unix
 endif
+" }}}
 
 " Directory creation {{{
 " Turn on automatic backups and set path
@@ -123,10 +124,11 @@ set colorcolumn=81              " Highlight column 81
 au VimResized * :wincmd =       " Auto resize split windows on parent resize
 nmap <Space> <Leader>
 
-" Configure items which were removed in Neovim
+" Settings only available in Vim (not Neovim) {{{
 if !has('nvim')
     set cryptmethod=blowfish2   "Set crypt method to blowfish2. Vim 7.4.401+ only
 endif
+" }}}
 
 
 " Load matchit.vim, but only if the user hasn't installed a newer version.
@@ -138,9 +140,10 @@ endif
 " VimWiki plugin configuration {{{
 let g:vimwiki_list = [{'path': '~/.vimhodgepodge/wiki',
             \ 'path_html': '~/.vimhodgepodge/wiki_html',
-            \ 'syntax': 'markdown', 'ext': '.wiki'}]
+            \ 'syntax': 'markdown', 'ext': '.md'}]
 let g:vimwiki_url_maxsave = 0
 let g:vimwiki_conceallevel = 0
+let g:vimwiki_global_ext = 0
 " }}}
 
 " IndentLine plugin configuration {{{
