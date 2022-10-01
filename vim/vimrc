@@ -217,6 +217,9 @@ vnoremap <F1> <Nop>
 " Quickly typing will exit Insert mode
 :imap jj <Esc>
 
+" File explorer toggle
+:nnoremap <C-N> :Lexplore<CR> :vertical resize 30<CR>
+
 " ######Custom commands and modes######
 " Write file even if it is read only.  SudoWrite.
 command! SudoWrite write !sudo tee % > /dev/null
