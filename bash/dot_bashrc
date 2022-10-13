@@ -39,10 +39,23 @@ fi
 
 #{{{ $PATH setup
 # Add .local/bin to path if it isn't already there
+## Rust - Cargo
+if ! [[ "${PATH}" =~ "${HOME}/.cargo/bin:" ]]
+then
+    PATH="${HOME}/.cargo/bin:${PATH}"
+fi
+
+## Node - NPM
+if ! [[ "${PATH}" =~ "${HOME}/.npm-global/bin:" ]]
+then
+    PATH="${HOME}/.npm-global/bin:${PATH}"
+fi
+
 if ! [[ "${PATH}" =~ "${HOME}/.local/bin:" ]]
 then
     PATH="${HOME}/.local/bin:${PATH}"
 fi
+
 export PATH
 #}}}
 
