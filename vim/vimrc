@@ -3,8 +3,8 @@
 
 " Plugin initialization {{{
 call plug#begin()
-" Seoul256 - color scheme
-Plug 'junegunn/seoul256.vim'
+" Gruvbox - color scheme
+Plug 'morhetz/gruvbox'
 " Airline - fancy statusline
 Plug 'vim-airline/vim-airline'
 " BufExplorer - easier buffer switching
@@ -103,23 +103,20 @@ set scrolloff=3                 "3 lines on top and bottom when scrolling
 set sidescrolloff=3             "3 lines of buffer when side scrolling
 set splitbelow                  "Split windows below current
 set splitright                  "Split window to right
-set listchars=tab:\|\ ,trail:-,extends:>,precedes:<,nbsp:+,eol:$ " when 'list on' is set
 set linebreak                   "wrap whole word, 'list on' breaks this
 set showbreak=»»»               "Character to show on wrapped lines
 set foldmethod=indent           "Create folds at indents
 set foldnestmax=5               "Don't go deeper than 5 nested indents
-set clipboard^=unnamed,unnamedplus "Copy contents into the system clipboard
-"seoul256 (dark) range 233 (darkest) ~ 239 (lightest) default: 237
-let g:seoul256_background=236
-"seoul256 (light) range 252 (darkest) ~ 256 (lightest) default: 253
-let g:seoul256_light_background=253
+set termguicolors               "Allow expanded color range
+set background=light            "Use light color scheme
+set listchars=tab:\|\ ,trail:-,extends:>,precedes:<,nbsp:+,eol:$ "when 'list on' is set
+set clipboard^=unnamed,unnamedplus                               "Use system clipboards
 autocmd FileType * unlet! g:airline#extensions#whitespace#checks
 autocmd FileType markdown let g:airline#extensions#whitespace#checks = [ 'indent' ]
 autocmd FileType vimwiki let g:airline#extensions#whitespace#checks = [ 'indent' ]
+autocmd vimenter * ++nested colorscheme gruvbox
 filetype plugin indent on
 syntax enable                   " Syntax highlighting
-set background=light            " Use dark backgrounds. If using seoul256-light, set to light.
-colorscheme seoul256-light      " Use seoul256-light. Change to seoul256 for a darker scheme.
 set colorcolumn=81              " Highlight column 81
 au VimResized * :wincmd =       " Auto resize split windows on parent resize
 nmap <Space> <Leader>
