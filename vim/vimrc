@@ -121,11 +121,16 @@ set colorcolumn=81              " Highlight column 81
 au VimResized * :wincmd =       " Auto resize split windows on parent resize
 nmap <Space> <Leader>
 
-" Settings only available in Vim (not Neovim) {{{
+" Vim specific settings not in NeoVim {{{
 if !has('nvim')
     set cryptmethod=blowfish2   "Set crypt method to blowfish2. Vim 7.4.401+ only
 endif
 " }}}
+
+" NeoVim specific settings
+if has('nvim')
+    set clipboard=unnamedplus "Use unnamedplus only
+endif
 
 
 " Load matchit.vim, but only if the user hasn't installed a newer version.

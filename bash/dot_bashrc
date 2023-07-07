@@ -1,22 +1,26 @@
 # .bashrc
 # vim: fdm=marker
-
-#{{{ Variable setup - Bash setup and internal
-# Bash setup
-HISTCONTROL=ignoreboth
+#
+#{{{ Bash options setup
+# Bash history config
+unset HISTFILESIZE
+HISTSIZE=10000
+HISTCONTROL=ignoreboth:erasedups
+HISTTIMEFORMAT='%FT%T '
 shopt -s histappend
-HISTSIZE=1000
-HISTFILESIZE=2000
 shopt -s checkwinsize
+# Trim '\w' PS1 output after 2 dirs deep
 PROMPT_DIRTRIM=2
 
 # Used for other commands in .bashrc
 hostname_short=$(hostname --short 2> /dev/null)
 #}}}
 
-# {{{ Variable setup - other
-export PIP_REQUIRE_VIRTUALENV=true
-export EDITOR='vim'
+# {{{ Editor config
+EDITOR='vi'
+[ -f $(which vim > /dev/null 2>&1) ] && EDITOR="vim"
+[ -f $(which nvim > /dev/null 2>&1) ] && EDITOR="nvim"
+export EDITOR
 export KUBE_EDITOR="${EDITOR}"
 #}}}
 
@@ -194,6 +198,8 @@ function set_bash_prompt () {
     else
         BRANCH=''
     fi
+
+    history -a
 
     # Set the bash prompt variable. If SSH'd, include the host.
     if [ -n "$SSH_TTY" ]; then
