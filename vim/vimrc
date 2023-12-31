@@ -22,7 +22,7 @@ Plug 'yggdroot/indentline'
 " BetterWhitespace - whitespace highlighting
 Plug 'ntpeters/vim-better-whitespace'
 " Scratch - scratch buffer
-Plug 'sahensley/scratch.vim'
+Plug 'flatcap/vim-scratch'
 " Vimwiki - personal wiki
 Plug 'vimwiki/vimwiki'
 call plug#end()
@@ -221,6 +221,14 @@ vnoremap <F1> <Nop>
 
 " File explorer toggle
 :nnoremap <C-N> :Lexplore<CR> :vertical resize 30<CR>
+
+" Scratch buffer settings
+" Horizontal scratch buffer
+nmap <Leader>sh <Plug>ScratchHorizontal
+command ScratchH :call scratch#CreateBuffer(0)
+" Vertical scratch buffer
+nmap <Leader>sv <Plug>ScratchVertical
+command ScratchV :call scratch#CreateBuffer(1)
 
 " ######Custom commands and modes######
 " Write file even if it is read only.  SudoWrite.
