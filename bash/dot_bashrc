@@ -49,6 +49,14 @@ then
     PATH="${HOME}/.cargo/bin:${PATH}"
 fi
 
+# PIPX settings
+#.local/pipx/apps/bin
+export PIPX_BIN_DIR="${HOME}/.local/pipx/apps/bin"
+if ! [[ "${PATH}" =~ "${HOME}/.local/pipx/apps/bin:" ]]
+then
+    PATH="${HOME}/.local/pipx/apps/bin:${PATH}"
+fi
+
 ## Node - NPM
 if ! [[ "${PATH}" =~ "${HOME}/.npm-global/bin:" ]]
 then
@@ -64,15 +72,10 @@ export PATH
 #}}}
 
 #{{{ Functions
-
 function ,podman-socket-setup() {
-    XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR:-/run/user/$(id -u)}
+    export XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR:-/run/user/$(id -u)}
     export DOCKER_HOST=unix://$XDG_RUNTIME_DIR/podman/podman.sock
     export DOCKER_SOCK="${DOCKER_HOST}"
-}
-
-function ,minikubectl-setup() {
-    alias kubectl="minikube kubectl --"
 }
 #}}}
 
@@ -221,3 +224,19 @@ if [[ -f ~/.local/bin/rtx ]] ; then
 fi
 #}}}
 
+#{{{ FZF bindings
+fzf_bash_completion="/usr/share/fzf/shell/key-bindings.bash"
+[ -f "${fzf_bash_completion}"  ] && source "${fzf_bash_completion}"
+#}}}
+
+#{{{ Foot numpad application mode config
+# \E[?1035l is xterm numlock modifier = off, which allows numlock application
+# mode to be set. \E= actually sets numpad app mode, so when numlock is on and
+# numpad keys are pressed, custom escape sequences are sent.
+# https://www.mankier.com/1/foot#Keypad (or 'man 1 foot')
+# To force default of numpad numeric only mode, send \E[?1035h
+# We set these in the base 'foot' config to be passed into tmux
+# Then tmux can enable app mode if needed by sending \E=
+# To go back to numeric mode, send \E>
+[[ "${TERM}" == "foot" ]] && echo -en '\E[?1035l\E='
+#}}}
