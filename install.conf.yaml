@@ -18,7 +18,10 @@
       path: vim/
     ~/.config/nvim/init.vim:
       path: nvim/init.vim
+      create: true
     ~/.digrc:
       path: dig/dot_digrc
     ~/.config/foot/foot.ini:
       path: foot/foot.ini
+      create: true
+
