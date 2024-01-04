@@ -14,13 +14,11 @@
       path: jetbrains/dot_ideavimrc
     ~/.bashrc:
       path: bash/dot_bashrc
-    ~/.bashrc_toolbox:
-      path: bash/dot_bashrc_toolbox
     ~/.vim:
       path: vim/
     ~/.config/nvim/init.vim:
       path: nvim/init.vim
     ~/.digrc:
       path: dig/dot_digrc
-    ~/.config/alacritty/alacritty.yml:
-      path: alacritty/alacritty.yml
+    ~/.config/foot/foot.ini:
+      path: foot/foot.ini
