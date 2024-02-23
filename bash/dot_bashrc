@@ -3,10 +3,9 @@
 #
 #{{{ Bash options setup
 # Bash history config
-unset HISTFILESIZE
-HISTSIZE=10000
+HISTSIZE=5000
+HISTFILESIZE=5000
 HISTCONTROL=ignoreboth:erasedups
-HISTTIMEFORMAT='%FT%T '
 shopt -s histappend
 shopt -s checkwinsize
 # Trim '\w' PS1 output after 2 dirs deep
@@ -18,8 +17,8 @@ hostname_short=$(hostname --short 2> /dev/null)
 
 # {{{ Editor config
 EDITOR='vi'
-[ -f $(which vim > /dev/null 2>&1) ] && EDITOR="vim"
 [ -f $(which nvim > /dev/null 2>&1) ] && EDITOR="nvim"
+[ -f $(which vim > /dev/null 2>&1) ] && EDITOR="vim"
 export EDITOR
 export KUBE_EDITOR="${EDITOR}"
 #}}}
@@ -91,79 +90,39 @@ alias dbox='distrobox'
 
 # {{{ Bash prompt and related helper functions
 ################################### bash_prompt ################################
-# Bash prompt from here: https://stackoverflow.com/a/23410110
-# The various escape codes that we can use to color our prompt.
-        RED="\[\033[0;31m\]"
-     YELLOW="\[\033[1;33m\]"
-      GREEN="\[\033[0;32m\]"
-       BLUE="\[\033[1;34m\]"
-  LIGHT_RED="\[\033[1;31m\]"
-LIGHT_GREEN="\[\033[1;32m\]"
-      WHITE="\[\033[1;37m\]"
- LIGHT_GRAY="\[\033[0;37m\]"
- COLOR_NONE="\[\e[0m\]"
+# Bash prompt reference here: https://stackoverflow.com/a/23410110
+# 033=ANSI Esc, 30-37m=fg colors, 40-47m=bg colors
+# 0m=reset, 1m=bold, 2m=faint, 3m=italic, 4m=underline, 5m=blink slow,
+# 6m=blink fast, 7m=reverse, 8m=conceal, 9m=strikethrough
+# ANSI reference: https://stackoverflow.com/a/33206814
+# Colors - standard
+C_BLACK="\[\033[0;30m\]"
+C_RED="\[\033[0;31m\]"
+C_GREEN="\[\033[0;32m\]"
+C_YELLOW="\[\033[0;33m\]"
+C_BLUE="\[\033[0;34m\]"
+C_MAGENTA="\[\033[0;35m\]"
+C_CYAN="\[\033[0;35m\]"
+C_WHITE="\[\033[0;36m\]"
 
-# Detect whether the current directory is a git repository.
-function is_git_repository () {
-    git branch > /dev/null 2>&1
-}
+# Colors - bold/bright
+C_B_BLACK="\[\033[1;30m\]"
+C_B_RED="\[\033[1;31m\]"
+C_B_GREEN="\[\033[1;32m\]"
+C_B_YELLOW="\[\033[1;33m\]"
+C_B_BLUE="\[\033[1;34m\]"
+C_B_MAGENTA="\[\033[1;35m\]"
+C_B_CYAN="\[\033[1;35m\]"
+C_B_WHITE="\[\033[1;36m\]"
 
-function set_git_branch () {
-    # Set the final branch string
-    BRANCH=`parse_git_branch`
-}
+# Colors - special
+C_RESET="\[\033[0m\]"
 
-# get current branch in git repo
-function parse_git_branch () {
-    BRANCH=$(git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/')
-    if [ ! "${BRANCH}" == "" ]
-    then
-        STAT=$(parse_git_dirty)
-        echo "[${BRANCH}${STAT}]"
-    else
-        echo ""
-    fi
-}
-
-# get current status of git repo
-function parse_git_dirty() {
-    bits=''
-    status=$(git status 2>&1 | tee)
-
-    renamed=$(echo -n "${status}" 2> /dev/null | grep "renamed:" &> /dev/null; echo "$?")
-    if [ "${renamed}" == "0" ]; then
-        bits=">${bits}"
-    fi
-
-    ahead=$(echo -n "${status}" 2> /dev/null | grep "Your branch is ahead of" &> /dev/null; echo "$?")
-    if [ "${ahead}" == "0" ]; then
-        bits="*${bits}"
-    fi
-
-    newfile=$(echo -n "${status}" 2> /dev/null | grep "new file:" &> /dev/null; echo "$?")
-    if [ "${newfile}" == "0" ]; then
-        bits="+${bits}"
-    fi
-
-    untracked=$(echo -n "${status}" 2> /dev/null | grep "Untracked files" &> /dev/null; echo "$?")
-    if [ "${untracked}" == "0" ]; then
-        bits="?${bits}"
-    fi
-
-    deleted=$(echo -n "${status}" 2> /dev/null | grep "deleted:" &> /dev/null; echo "$?")
-    if [ "${deleted}" == "0" ]; then
-        bits="x${bits}"
-    fi
-
-    dirty=$(echo -n "${status}" 2> /dev/null | grep "modified:" &> /dev/null; echo "$?")
-    if [ "${dirty}" == "0" ]; then
-        bits="!${bits}"
-    fi
-
-    if [ ! "${bits}" == "" ]; then
-        echo " ${bits}"
-    else
-        echo ""
+function set_git () {
+    if [[ -z "${PROMPT_NO_GIT}" ]] && [[ -f ~/.git-prompt.sh ]] ; then
+        . ~/.git-prompt.sh
+        GIT_PS1_SHOWDIRTYSTATE=1
+        GIT_PS1_SHOWUNTRACKEDFILES=1
     fi
 }
 
@@ -173,7 +132,7 @@ function set_prompt_symbol () {
     if test $1 -eq 0 ; then
         PROMPT_SYMBOL="\$"
     else
-        PROMPT_SYMBOL="${LIGHT_RED}\$${COLOR_NONE}"
+        PROMPT_SYMBOL="${C_B_RED}\$${C_RESET}"
     fi
 }
 
@@ -182,7 +141,7 @@ function set_virtualenv () {
     if test -z "${VIRTUAL_ENV}" ; then
         PYTHON_VIRTUALENV=""
     else
-        PYTHON_VIRTUALENV="${BLUE}[`basename \"$VIRTUAL_ENV\"`]${COLOR_NONE} "
+        PYTHON_VIRTUALENV="${C_BLUE}[`basename \"$VIRTUAL_ENV\"`]${C_RESET} "
     fi
 }
 
@@ -195,24 +154,33 @@ function set_bash_prompt () {
     # Set the PYTHON_VIRTUALENV variable.
     set_virtualenv
 
-    # Set the BRANCH variable.
-    if [ -z $PROMPT_NO_GIT ] && is_git_repository ; then
-        set_git_branch
-    else
-        BRANCH=''
-    fi
-
+    # Append to history
     history -a
 
-    # Set the bash prompt variable. If SSH'd, include the host.
-    if [ -n "$SSH_TTY" ]; then
-        PS1="${PYTHON_VIRTUALENV}${YELLOW}\u@\h:\w${COLOR_NONE} ${BRANCH}${PROMPT_SYMBOL} "
-    elif [ -n "$DISTROBOX_ENTER_PATH" ] || [ -f "/run/.toolboxenv" ]; then
-        PS1="🧰${PYTHON_VIRTUALENV}${YELLOW}\u:\w${COLOR_NONE} ${BRANCH}${PROMPT_SYMBOL} "
+    # Assume git integration by default. Set PROMPT_NO_GIT to a value to disable.
+    if [[ -z "${PROMPT_NO_GIT}" ]] ; then
+        # Set the bash prompt variable. If SSH'd, include the host.
+        if [ -n "$SSH_TTY" ]; then
+            PS1="${PYTHON_VIRTUALENV}${C_B_GREEN}\u@\h${C_RESET}:${C_B_BLUE}\w ${C_RESET}\$(__git_ps1 \"[%s]\")${PROMPT_SYMBOL} "
+        elif [ -n "$DISTROBOX_ENTER_PATH" ] || [ -f "/run/.toolboxenv" ]; then
+            PS1="🧰${PYTHON_VIRTUALENV}${C_B_GREEN}\u${C_RESET}:${C_B_BLUE}\w ${C_RESET}\$(__git_ps1 \"[%s]\")${PROMPT_SYMBOL} "
+        else
+            PS1="${PYTHON_VIRTUALENV}${C_B_GREEN}\u${C_RESET}:${C_B_BLUE}\w ${C_RESET}\$(__git_ps1 \"[%s]\")${PROMPT_SYMBOL} "
+        fi
     else
-        PS1="${PYTHON_VIRTUALENV}${YELLOW}\u:\w${COLOR_NONE} ${BRANCH}${PROMPT_SYMBOL} "
+        # Set the bash prompt variable. If SSH'd, include the host.
+        if [ -n "$SSH_TTY" ]; then
+            PS1="${PYTHON_VIRTUALENV}${C_B_GREEN}\u@\h${C_RESET}:${C_B_BLUE}\w ${C_RESET}${PROMPT_SYMBOL} "
+        elif [ -n "$DISTROBOX_ENTER_PATH" ] || [ -f "/run/.toolboxenv" ]; then
+            PS1="🧰${PYTHON_VIRTUALENV}${C_B_GREEN}\u${C_RESET}:${C_B_BLUE}\w ${C_RESET}${PROMPT_SYMBOL} "
+        else
+            PS1="${PYTHON_VIRTUALENV}${C_B_GREEN}\u${C_RESET}:${C_B_BLUE}\w ${C_RESET}${PROMPT_SYMBOL} "
+        fi
     fi
 }
+
+# This doesn't need to run every prompt call
+set_git
 
 # Tell bash to execute this function just before displaying its prompt.
 PROMPT_COMMAND=set_bash_prompt
