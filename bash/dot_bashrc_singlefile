@@ -1,0 +1,251 @@
+# .bashrc
+# vim: fdm=marker
+#
+#{{{ Bash options setup
+# Bash history config
+HISTSIZE=5000
+HISTFILESIZE=5000
+HISTCONTROL=ignoreboth:erasedups
+shopt -s histappend
+PROMPT_COMMAND='history -a'
+shopt -s checkwinsize
+# Trim '\w' PS1 output after 2 dirs deep
+PROMPT_DIRTRIM=2
+
+# Used for other commands in .bashrc
+hostname_short=$(hostname --short 2> /dev/null)
+#}}}
+
+# {{{ Editor config
+EDITOR='vi'
+[ -f $(which nvim > /dev/null 2>&1) ] && EDITOR="nvim"
+[ -f $(which vim > /dev/null 2>&1) ] && EDITOR="vim"
+export EDITOR
+export KUBE_EDITOR="${EDITOR}"
+#}}}
+
+# Check for interative mode, return if not interactive
+[[ $- = *i* ]] || return
+
+
+# {{{ Source global and host specific bashrc files
+# Source global definitions
+if [ -f /etc/bashrc ]; then
+    . /etc/bashrc
+fi
+
+# Configure host specific settings
+if [ -f "${HOME}/.bashrc_${hostname_short}" ]
+then
+    source "${HOME}/.bashrc_${hostname_short}"
+fi
+#}}}
+
+#{{{ $PATH setup
+# Add .local/bin to path if it isn't already there
+## Rust - Cargo
+if ! [[ "${PATH}" =~ "${HOME}/.cargo/bin:" ]]
+then
+    PATH="${HOME}/.cargo/bin:${PATH}"
+fi
+
+# PIPX settings
+#.local/pipx/apps/bin
+export PIPX_BIN_DIR="${HOME}/.local/pipx/apps/bin"
+if ! [[ "${PATH}" =~ "${HOME}/.local/pipx/apps/bin:" ]]
+then
+    PATH="${HOME}/.local/pipx/apps/bin:${PATH}"
+fi
+
+## Node - NPM
+if ! [[ "${PATH}" =~ "${HOME}/.npm-global/bin:" ]]
+then
+    PATH="${HOME}/.npm-global/bin:${PATH}"
+fi
+
+if ! [[ "${PATH}" =~ "${HOME}/.local/bin:" ]]
+then
+    PATH="${HOME}/.local/bin:${PATH}"
+fi
+
+export PATH
+#}}}
+
+#{{{ Functions
+function ,podman-socket-setup() {
+    export XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR:-/run/user/$(id -u)}
+    export DOCKER_HOST=unix://$XDG_RUNTIME_DIR/podman/podman.sock
+    export DOCKER_SOCK="${DOCKER_HOST}"
+}
+#}}}
+
+#{{{ Aliases
+alias ,set-requests-ca-bundle='export REQUESTS_CA_BUNDLE="/etc/pki/ca-trust/extracted/openssl/ca-bundle.trust.crt"'
+alias ,unset-requests-ca-bundle='unset REQUESTS_CA_BUNDLE'
+alias ,set-xdg-runtime-dir='export XDG_RUNTIME_DIR="/run/user/$(id -u)"'
+alias ,unset-pip-require-virtualenv='unset PIP_REQUIRE_VIRTUALENV'
+alias gitrefgraph='git log --graph --oneline --decorate --reflog'
+alias docker='podman'
+alias dbox='distrobox'
+#}}}
+
+# {{{ Bash prompt and related helper functions
+################################### bash_prompt ################################
+# Bash prompt from here: https://stackoverflow.com/a/23410110
+# The various escape codes that we can use to color our prompt.
+        RED="\[\033[0;31m\]"
+     YELLOW="\[\033[1;33m\]"
+      GREEN="\[\033[0;32m\]"
+       BLUE="\[\033[1;34m\]"
+  LIGHT_RED="\[\033[1;31m\]"
+LIGHT_GREEN="\[\033[1;32m\]"
+      WHITE="\[\033[1;37m\]"
+ LIGHT_GRAY="\[\033[0;37m\]"
+ COLOR_NONE="\[\e[0m\]"
+
+if [ -f ~/.git-prompt.sh ] ; then
+    . ~/.git-prompt.sh
+    GIT_PS1_SHOWDIRTYSTATE=1
+    GIT_PS1_SHOWUNTRACKEDFILES=1
+    PS1="{C_B_GREEN}\u${C_RESET}:${C_B_BLUE}\w ${C_RESET}\$(__git_ps1 \"[%s]\")$ "
+else
+    PS1="{C_B_GREEN}\u${C_RESET}:${C_B_BLUE}\w ${C_RESET}\$ "
+fi
+
+# Detect whether the current directory is a git repository.
+function is_git_repository () {
+    git branch > /dev/null 2>&1
+}
+
+function set_git_branch () {
+    # Set the final branch string
+    BRANCH=`parse_git_branch`
+}
+
+# get current branch in git repo
+function parse_git_branch () {
+    BRANCH=$(git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/')
+    if [ ! "${BRANCH}" == "" ]
+    then
+        STAT=$(parse_git_dirty)
+        echo "[${BRANCH}${STAT}]"
+    else
+        echo ""
+    fi
+}
+
+# get current status of git repo
+function parse_git_dirty() {
+    bits=''
+    status=$(git status 2>&1 | tee)
+
+    renamed=$(echo -n "${status}" 2> /dev/null | grep "renamed:" &> /dev/null; echo "$?")
+    if [ "${renamed}" == "0" ]; then
+        bits=">${bits}"
+    fi
+
+    ahead=$(echo -n "${status}" 2> /dev/null | grep "Your branch is ahead of" &> /dev/null; echo "$?")
+    if [ "${ahead}" == "0" ]; then
+        bits="*${bits}"
+    fi
+
+    newfile=$(echo -n "${status}" 2> /dev/null | grep "new file:" &> /dev/null; echo "$?")
+    if [ "${newfile}" == "0" ]; then
+        bits="+${bits}"
+    fi
+
+    untracked=$(echo -n "${status}" 2> /dev/null | grep "Untracked files" &> /dev/null; echo "$?")
+    if [ "${untracked}" == "0" ]; then
+        bits="?${bits}"
+    fi
+
+    deleted=$(echo -n "${status}" 2> /dev/null | grep "deleted:" &> /dev/null; echo "$?")
+    if [ "${deleted}" == "0" ]; then
+        bits="x${bits}"
+    fi
+
+    dirty=$(echo -n "${status}" 2> /dev/null | grep "modified:" &> /dev/null; echo "$?")
+    if [ "${dirty}" == "0" ]; then
+        bits="!${bits}"
+    fi
+
+    if [ ! "${bits}" == "" ]; then
+        echo " ${bits}"
+    else
+        echo ""
+    fi
+}
+
+# Return the prompt symbol to use, colorized based on the return value of the
+# previous command.
+function set_prompt_symbol () {
+    if test $1 -eq 0 ; then
+        PROMPT_SYMBOL="\$"
+    else
+        PROMPT_SYMBOL="${LIGHT_RED}\$${COLOR_NONE}"
+    fi
+}
+
+# Determine active Python virtualenv details.
+function set_virtualenv () {
+    if test -z "${VIRTUAL_ENV}" ; then
+        PYTHON_VIRTUALENV=""
+    else
+        PYTHON_VIRTUALENV="${BLUE}[`basename \"$VIRTUAL_ENV\"`]${COLOR_NONE} "
+    fi
+}
+
+# Set the full bash prompt.
+function set_bash_prompt () {
+    # Set the PROMPT_SYMBOL variable. We do this first so we don't lose the
+    # return value of the last command.
+    set_prompt_symbol $?
+
+    # Set the PYTHON_VIRTUALENV variable.
+    set_virtualenv
+
+    # Set the BRANCH variable.
+    if [ -z $PROMPT_NO_GIT ] && is_git_repository ; then
+        set_git_branch
+    else
+        BRANCH=''
+    fi
+
+    history -a
+
+    # Set the bash prompt variable. If SSH'd, include the host.
+    if [ -n "$SSH_TTY" ]; then
+        PS1="${PYTHON_VIRTUALENV}${YELLOW}\u@\h:\w${COLOR_NONE} ${BRANCH}${PROMPT_SYMBOL} "
+    elif [ -n "$DISTROBOX_ENTER_PATH" ] || [ -f "/run/.toolboxenv" ]; then
+        PS1="🧰${PYTHON_VIRTUALENV}${YELLOW}\u:\w${COLOR_NONE} ${BRANCH}${PROMPT_SYMBOL} "
+    else
+        PS1="${PYTHON_VIRTUALENV}${YELLOW}\u:\w${COLOR_NONE} ${BRANCH}${PROMPT_SYMBOL} "
+    fi
+}
+
+# Tell bash to execute this function just before displaying its prompt.
+PROMPT_COMMAND=set_bash_prompt
+#}}}
+
+#{{{ rtx version manager - asdf replacement
+if [[ -f ~/.local/bin/rtx ]] ; then
+    eval "$(rtx activate bash)"
+fi
+#}}}
+
+#{{{ FZF bindings
+fzf_bash_completion="/usr/share/fzf/shell/key-bindings.bash"
+[ -f "${fzf_bash_completion}"  ] && source "${fzf_bash_completion}"
+#}}}
+
+#{{{ Foot numpad application mode config
+# \E[?1035l is xterm numlock modifier = off, which allows numlock application
+# mode to be set. \E= actually sets numpad app mode, so when numlock is on and
+# numpad keys are pressed, custom escape sequences are sent.
+# https://www.mankier.com/1/foot#Keypad (or 'man 1 foot')
+# To force default of numpad numeric only mode, send \E[?1035h
+# We set these in the base 'foot' config to be passed into tmux
+# Then tmux can enable app mode if needed by sending \E=
+# To go back to numeric mode, send \E>
+[[ "${TERM}" == "foot" ]] && echo -en '\E[?1035l\E='
+#}}}
