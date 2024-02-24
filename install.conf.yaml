@@ -24,4 +24,6 @@
     ~/.config/foot/foot.ini:
       path: foot/foot.ini
       create: true
+    ~/.git-prompt.sh:
+      path: git/dot_git-prompt.sh
 
