@@ -165,7 +165,7 @@ function set_bash_prompt () {
         if [ -n "$SSH_TTY" ]; then
             PS1="${PYTHON_VIRTUALENV}${C_B_GREEN}\u@\h${C_RESET}:${C_B_BLUE}\w ${C_RESET}\$(__git_ps1 \"[%s]\")${PROMPT_SYMBOL} "
         elif [ -n "$DISTROBOX_ENTER_PATH" ] || [ -f "/run/.toolboxenv" ]; then
-            PS1="🧰${PYTHON_VIRTUALENV}${C_B_GREEN}\u${C_RESET}:${C_B_BLUE}\w ${C_RESET}\$(__git_ps1 \"[%s]\")${PROMPT_SYMBOL} "
+            PS1="⚙️${PYTHON_VIRTUALENV}${C_B_GREEN}\u${C_RESET}:${C_B_BLUE}\w ${C_RESET}\$(__git_ps1 \"[%s]\")${PROMPT_SYMBOL} "
         else
             PS1="${PYTHON_VIRTUALENV}${C_B_GREEN}\u${C_RESET}:${C_B_BLUE}\w ${C_RESET}\$(__git_ps1 \"[%s]\")${PROMPT_SYMBOL} "
         fi
@@ -174,7 +174,7 @@ function set_bash_prompt () {
         if [ -n "$SSH_TTY" ]; then
             PS1="${PYTHON_VIRTUALENV}${C_B_GREEN}\u@\h${C_RESET}:${C_B_BLUE}\w ${C_RESET}${PROMPT_SYMBOL} "
         elif [ -n "$DISTROBOX_ENTER_PATH" ] || [ -f "/run/.toolboxenv" ]; then
-            PS1="🧰${PYTHON_VIRTUALENV}${C_B_GREEN}\u${C_RESET}:${C_B_BLUE}\w ${C_RESET}${PROMPT_SYMBOL} "
+            PS1="⚙️${PYTHON_VIRTUALENV}${C_B_GREEN}\u${C_RESET}:${C_B_BLUE}\w ${C_RESET}${PROMPT_SYMBOL} "
         else
             PS1="${PYTHON_VIRTUALENV}${C_B_GREEN}\u${C_RESET}:${C_B_BLUE}\w ${C_RESET}${PROMPT_SYMBOL} "
         fi
