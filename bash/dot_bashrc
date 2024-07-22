@@ -17,7 +17,6 @@ hostname_short=$(hostname --short 2> /dev/null)
 
 # {{{ Editor config
 EDITOR='vi'
-[ -f $(which nvim > /dev/null 2>&1) ] && EDITOR="nvim"
 [ -f $(which vim > /dev/null 2>&1) ] && EDITOR="vim"
 export EDITOR
 export KUBE_EDITOR="${EDITOR}"
