@@ -188,12 +188,6 @@ set_git
 PROMPT_COMMAND=set_bash_prompt
 #}}}
 
-#{{{ rtx version manager - asdf replacement
-if [[ -f ~/.local/bin/rtx ]] ; then
-    eval "$(rtx activate bash)"
-fi
-#}}}
-
 #{{{ FZF bindings
 fzf_bash_completion="/usr/share/fzf/shell/key-bindings.bash"
 [ -f "${fzf_bash_completion}"  ] && source "${fzf_bash_completion}"
